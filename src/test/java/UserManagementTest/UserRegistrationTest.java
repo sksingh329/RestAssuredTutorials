@@ -10,7 +10,7 @@ import java.util.Random;
 
 public class UserRegistrationTest {
     @Test
-    public void CreatingRequestTest(){
+    public void userRegistrationWithMandatoryFieldTest(){
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         String dateTime = dateFormat.format(new Date());
         Random random = new Random();
