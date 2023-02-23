@@ -1,4 +1,4 @@
-package UserManagement;
+package app.UserManagement;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -17,12 +17,19 @@ public class UserRegistration {
         RestAssured.baseURI = baseUri;
         userRegistrationRequestBody = "{\"username\": \""+userName+"\",\"password\": \""+password+"\"}";
     }
+    public UserRegistration(String userName, String password,String firstName, String lastName,String email){
+        RestAssured.baseURI = baseUri;
+        userRegistrationRequestBody = "{\"username\": \""+userName+"\",\"password\": \""+password+"\",\"first_name\":\""+firstName+"\",\"last_name\":\""+lastName+"\",\"email\":\""+email+"\"}";
+    }
 
     public void createUser(){
         response = RestAssured.given()
                 .contentType(ContentType.JSON)
                 .body(userRegistrationRequestBody)
+                .log().body()
                 .post(userRegisterPath);
+
+        response.then().log().body();
     }
 
     public int getStatusCode(){
@@ -34,4 +41,7 @@ public class UserRegistration {
         return jsonPath.getString(key);
     }
 
+    public String getResponseHeaderUsingKey(String key){
+        return response.getHeader(key);
+    }
 }
