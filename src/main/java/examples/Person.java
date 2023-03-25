@@ -11,6 +11,7 @@ public class Person {
     private final String dummyEndpointPath = "/auth/cookie/login/";
 
     public Person(String name, int age, String gender, PersonPOJO.Address address, List<PersonPOJO.PhoneNumber> phoneNumbers){
+        RestAssured.baseURI = baseUri;
         personPOJO = new PersonPOJO(name,age,gender,address,phoneNumbers);
     }
 
