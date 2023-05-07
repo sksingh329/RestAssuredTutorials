@@ -14,6 +14,13 @@ public class CrocodilesPOJO {
     @JsonProperty("id")
     private int id;
 
+    public CrocodilesPOJO(String crocodileName, String gender, String crocodileDOB) {
+        this.crocodileName = crocodileName;
+        this.gender = gender;
+        this.crocodileDOB = crocodileDOB;
+    }
+
+
     public void setAge(int age) {
         this.age = age;
     }
@@ -24,12 +31,6 @@ public class CrocodilesPOJO {
 
     public CrocodilesPOJO(){
 
-    }
-
-    public CrocodilesPOJO(String crocodileName, String gender, String crocodileDOB) {
-        this.crocodileName = crocodileName;
-        this.gender = gender;
-        this.crocodileDOB = crocodileDOB;
     }
 
     public String getCrocodileName() {
