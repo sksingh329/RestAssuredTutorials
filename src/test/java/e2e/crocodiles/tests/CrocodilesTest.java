@@ -7,9 +7,17 @@ import app.e2e.crocodiles.flows.LoginUserFlow;
 import app.e2e.crocodiles.pojo.CrocodilesPOJO;
 import core.utils.DateFormatUtils;
 import core.utils.RandomNumberUtils;
+import io.restassured.path.json.JsonPath;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItems;
 
 public class CrocodilesTest {
     private String authToken;
@@ -98,5 +106,38 @@ public class CrocodilesTest {
         //Validate crocodile name is updated
         CrocodilesPOJO updatedCrocodileDetails = createCrocodileFlow.getCrocodilesPojoResponse();
         Assert.assertEquals(updatedCrocodileDetails.getCrocodileName(),crocodileNewName);
+    }
+    @Test
+    public void validateCrocodilesTest() {
+
+        APIResponseDetailsExtractor createCrocodileResponse;
+
+        String[][] crocodileDetails = {{"Test Crocodile1","M","2010-06-27"},{"Test Crocodile2","F","2018-06-27"},{"Test Crocodile3","M","2007-06-27"}};
+        List<Integer> crocodileIds = new ArrayList<>();
+        for (String[] crocodileDetail : crocodileDetails) {
+            createCrocodileResponse = createCrocodile(crocodileDetail[0], crocodileDetail[1], crocodileDetail[2]);
+            assertThat(createCrocodileResponse.getStatusCode(), equalTo(201));
+            crocodileIds.add(Integer.parseInt(createCrocodileResponse.getResponseBodyUsingKey("id")));
+        }
+
+        APIResponseDetailsExtractor getCrocodileResponse = createCrocodileFlow.getCrocodile(authToken);
+        //Validate status code
+        assertThat(getCrocodileResponse.getStatusCode(),equalTo(200));
+        //Validate header
+        assertThat(getCrocodileResponse.getResponseHeaderUsingKey("Content-Type"),containsString("application/json"));
+        assertThat(Integer.parseInt(getCrocodileResponse.getResponseHeaderUsingKey("Content-Length")),greaterThan(100));
+        //Validate response body
+        JsonPath jsonPath = getCrocodileResponse.getResponseJsonPath();
+        int crocodilesCount = jsonPath.getList("").size();
+        assertThat(crocodilesCount,equalTo(crocodileDetails.length));
+        List<Integer> crocodileIdsList = jsonPath.getList("id");
+        assertThat(crocodileIdsList,hasItems(crocodileIds.get(0),crocodileIds.get(1),crocodileIds.get(2)));
+
+        //Validate response body using condition
+        List<Integer> crocodileIdsListHavingAgeGreaterThan10 = jsonPath.getList("findAll { it.age > 10 }.id");
+        assertThat(crocodileIdsListHavingAgeGreaterThan10,hasItems(crocodileIds.get(0),crocodileIds.get(2)));
+
+        List<Integer> crocodileIdsListHavingGenderFemale = jsonPath.getList("findAll { it.sex == 'F' }.id");
+        assertThat(crocodileIdsListHavingGenderFemale,hasItems(crocodileIds.get(1)));
     }
 }

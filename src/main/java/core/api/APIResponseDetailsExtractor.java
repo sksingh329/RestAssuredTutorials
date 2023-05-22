@@ -2,6 +2,7 @@ package core.api;
 
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
+import io.restassured.response.ResponseBody;
 
 public class APIResponseDetailsExtractor {
     private Response response;
@@ -15,7 +16,11 @@ public class APIResponseDetailsExtractor {
 
     public String getResponseBodyUsingKey(String key){
         JsonPath jsonPath = response.jsonPath();
+
         return jsonPath.getString(key);
+    }
+    public JsonPath getResponseJsonPath(){
+        return response.jsonPath();
     }
 
     public String getResponseHeaderUsingKey(String key){

@@ -87,4 +87,14 @@ public class CrocodilesFlow {
 
         return new APIResponseDetailsExtractor(response);
     }
+    public APIResponseDetailsExtractor getCrocodile(String authToken) {
+        Response response = RestAssured.given()
+                .contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + authToken)
+                .get(crocodilesBasePath);
+
+        response.then().log().all();
+
+        return new APIResponseDetailsExtractor(response);
+    }
 }

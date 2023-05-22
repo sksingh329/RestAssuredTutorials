@@ -18,4 +18,9 @@ public class Users {
         UsersPOJO usersPOJO = response.as(UsersPOJO.class);
         return usersPOJO;
     }
+    public Response usersDetail(){
+        Response response = RestAssured.given().get(usersEndpointPath);
+        response.then().log().all();
+        return response;
+    }
 }
