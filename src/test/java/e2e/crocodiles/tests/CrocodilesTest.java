@@ -140,4 +140,37 @@ public class CrocodilesTest {
         List<Integer> crocodileIdsListHavingGenderFemale = jsonPath.getList("findAll { it.sex == 'F' }.id");
         assertThat(crocodileIdsListHavingGenderFemale,hasItems(crocodileIds.get(1)));
     }
+
+    @Test
+    public void deleteCrocodilesTest() {
+
+        APIResponseDetailsExtractor createCrocodileResponse;
+
+        String[][] crocodileDetails = {{"Test Crocodile1", "M", "2010-06-27"}, {"Test Crocodile2", "F", "2018-06-27"}, {"Test Crocodile3", "M", "2007-06-27"}};
+        List<Integer> crocodileIds = new ArrayList<>();
+        for (String[] crocodileDetail : crocodileDetails) {
+            createCrocodileResponse = createCrocodile(crocodileDetail[0], crocodileDetail[1], crocodileDetail[2]);
+            assertThat(createCrocodileResponse.getStatusCode(), equalTo(201));
+            crocodileIds.add(Integer.parseInt(createCrocodileResponse.getResponseBodyUsingKey("id")));
+        }
+        int crocodileIdToDelete = crocodileIds.get(0);
+        APIResponseDetailsExtractor deleteCrocodileResponse = createCrocodileFlow.deleteCrocodile(authToken,crocodileIdToDelete);
+
+        //Validate status code of DELETE response
+        assertThat(deleteCrocodileResponse.getStatusCode(),equalTo(204));
+
+        APIResponseDetailsExtractor getCrocodileResponse = createCrocodileFlow.getCrocodile(authToken);
+        //Validate status code of GET response
+        assertThat(getCrocodileResponse.getStatusCode(),equalTo(200));
+
+        //Validate response body
+        JsonPath jsonPath = getCrocodileResponse.getResponseJsonPath();
+        int crocodilesCount = jsonPath.getList("").size();
+        assertThat(crocodilesCount,equalTo(crocodileDetails.length-1));
+        List<Integer> crocodileIdsList = jsonPath.getList("id");
+        //Validate that deleted crocodile id does not exist
+        assertThat(crocodileIdsList,not(hasItems(crocodileIdToDelete)));
+        //Validate that other crocodile id exist
+        assertThat(crocodileIdsList,hasItems(crocodileIds.get(1),crocodileIds.get(2)));
+    }
 }

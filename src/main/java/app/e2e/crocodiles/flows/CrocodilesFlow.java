@@ -97,4 +97,23 @@ public class CrocodilesFlow {
 
         return new APIResponseDetailsExtractor(response);
     }
+    public APIResponseDetailsExtractor deleteCrocodile(String authToken,int crocodileId) {
+        Response response = RestAssured.given()
+                .contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + authToken)
+                .delete(crocodilesBasePath+crocodileId);
+
+        response.then().log().all();
+
+        String redirectUrl = response.getHeader("Location");
+
+        response = RestAssured.given()
+                .contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + authToken)
+                .delete(baseUri+redirectUrl);
+
+        response.then().log().all();
+
+        return new APIResponseDetailsExtractor(response);
+    }
 }
