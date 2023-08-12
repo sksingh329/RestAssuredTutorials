@@ -22,6 +22,9 @@ public class APIResponseDetailsExtractor {
     public JsonPath getResponseJsonPath(){
         return response.jsonPath();
     }
+    public Response getResponse(){
+        return response;
+    }
 
     public String getResponseHeaderUsingKey(String key){
         return response.getHeader(key);

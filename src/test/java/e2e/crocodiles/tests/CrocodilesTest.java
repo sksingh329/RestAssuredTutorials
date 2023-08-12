@@ -173,4 +173,25 @@ public class CrocodilesTest {
         //Validate that other crocodile id exist
         assertThat(crocodileIdsList,hasItems(crocodileIds.get(1),crocodileIds.get(2)));
     }
+
+    @Test
+    public void optionsMethodTest(){
+        CrocodilesFlow crocodilesFlow = new CrocodilesFlow();
+        APIResponseDetailsExtractor optionsCrocodiles = crocodilesFlow.optionsCrocodiles(authToken);
+        // Validate status code
+        assertThat(optionsCrocodiles.getStatusCode(),equalTo(200));
+        // Validate allowed method
+        assertThat(optionsCrocodiles.getResponseHeaderUsingKey("Allow"),equalTo("GET, POST, HEAD, OPTIONS"));
+    }
+    @Test
+    public void headMethodTest(){
+        CrocodilesFlow crocodilesFlow = new CrocodilesFlow();
+        APIResponseDetailsExtractor headCrocodiles = crocodilesFlow.headCrocodiles(authToken);
+        // Validate status code
+        assertThat(headCrocodiles.getStatusCode(),equalTo(200));
+        //Validate header field
+        assertThat(headCrocodiles.getResponseHeaderUsingKey("X-Frame-Options"),equalTo("SAMEORIGIN"));
+        //Validate response body is empty string 
+        assertThat(headCrocodiles.getResponse().getBody().asString(),equalTo(""));
+    }
 }

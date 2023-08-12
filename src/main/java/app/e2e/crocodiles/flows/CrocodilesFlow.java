@@ -23,6 +23,9 @@ public class CrocodilesFlow {
         crocodilesPOJO = new CrocodilesPOJO(crocodileName,gender,crocodileDOB);
         RestAssured.baseURI = baseUri;
     }
+    public CrocodilesFlow(){
+        RestAssured.baseURI = baseUri;
+    }
 
     public APIResponseDetailsExtractor createCrocodile(String authToken){
         Response response = RestAssured.given()
@@ -111,6 +114,28 @@ public class CrocodilesFlow {
                 .contentType(ContentType.JSON)
                 .header("Authorization", "Bearer " + authToken)
                 .delete(baseUri+redirectUrl);
+
+        response.then().log().all();
+
+        return new APIResponseDetailsExtractor(response);
+    }
+    public APIResponseDetailsExtractor optionsCrocodiles(String authToken){
+        Response response = RestAssured.given()
+                .contentType(ContentType.JSON)
+                .header("Authorization","Bearer "+authToken)
+                .log().body()
+                .options(crocodilesBasePath);
+
+        response.then().log().all();
+
+        return new APIResponseDetailsExtractor(response);
+    }
+    public APIResponseDetailsExtractor headCrocodiles(String authToken){
+        Response response = RestAssured.given()
+                .contentType(ContentType.JSON)
+                .header("Authorization","Bearer "+authToken)
+                .log().body()
+                .head(crocodilesBasePath);
 
         response.then().log().all();
 
